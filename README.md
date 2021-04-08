@@ -1,9 +1,9 @@
 
-基于numpy ,完成共面简单多边形的耳裁法
+base numpy 
 
-主要包括几个步骤：
+total steps:
 
-- 点降维
-- 强制逆时针顺序
-- 凸角检测
-- 是否可裁剪检测
+- 3D points on plane to 2D points
+- counter clock wise
+- conver vertex judge
+- clip able judge
