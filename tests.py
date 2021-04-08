@@ -7,7 +7,7 @@ Python:     python3.6
 import logging
 import numpy as np
 
-from EarClipping.core import Plane,clipping,green_value
+from EarClipping.core import Plane3D, clip
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -27,19 +27,19 @@ u_bas = np.asarray([0, 1, 0])
 v_bas = np.asarray([0, 0, 1])
 origin = np.asarray([0, 0, 0])
 
-plane = Plane(u_bas,v_bas,origin)
+plane = Plane3D(u_bas, v_bas, origin)
 point_np_all = []
 for point in points:
-    point_tmp = np.asarray([point["x"],point["y"],point["z"]])
-    uv = plane.uv(point_tmp)
+    point_tmp = np.asarray([point["x"], point["y"], point["z"]])
+    uv = plane.project(point_tmp)
     # print(f"{point_tmp}:{uv}")
-    point_np_all.append(uv)
-
-# print(green_value(point_np_all))
-
-# print(point_np_all)
-data = clipping(point_np_all)
-for triangle in data:
-    print(plane.to_xyz(triangle[0]))
-    print(plane.to_xyz(triangle[1]))
-    print(plane.to_xyz(triangle[2]))
+    point_np_all.append([uv.U,uv.V])
+#
+# # print(green_value(point_np_all))
+#
+# # print(point_np_all)
+# data = clipping(point_np_all)
+# for triangle in data:
+#     print(plane.to_xyz(triangle[0]))
+#     print(plane.to_xyz(triangle[1]))
+#     print(plane.to_xyz(triangle[2]))
