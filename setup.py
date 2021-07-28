@@ -11,10 +11,10 @@ from setuptools import setup
 
 with open("README.md", "r") as f:
     long_description = f.read()
-
+from EarClipping import __version__
 setup(
     name="EarClipping",
-    version="0.1.1",
+    version=__version__,
     description="EarClipping",
     long_description=long_description,
     long_description_content_type='text/markdown',

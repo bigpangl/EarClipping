@@ -34,6 +34,7 @@ for point in points:
     uv = plane.project(point_tmp)
     # print(f"{point_tmp}:{uv}")
     point_np_all.append([uv.U,uv.V])
+print(point_np_all)
 #
 # # print(green_value(point_np_all))
 #

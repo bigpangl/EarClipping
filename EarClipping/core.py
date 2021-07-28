@@ -1,12 +1,15 @@
 """
 Author:     LanHao
-Date:       2020/11/10
-Python:     python3.6
+Email:      bigpangl@163.com
+Date:       2021/4/7 8:58
+Python:     python3.X
+
+此部分实现耳裁法
 
 """
-from typing import List
-import logging
 import math
+import logging
+from typing import List
 
 import numpy as np
 
@@ -17,7 +20,6 @@ logger = logging.getLogger(__name__)
 
 def _clock_wise(points: np.ndarray) -> bool:
     """
-
     通过格林公式/ 鞋带公式 判断顺拟时针
 
     大于0 表示逆时针,小于0 表示顺时针
@@ -26,39 +28,51 @@ def _clock_wise(points: np.ndarray) -> bool:
 
     https://blog.csdn.net/qq_37602930/article/details/80496498
     https://blog.csdn.net/c___c18/article/details/89284965
-    :param points: np.ndarry type,2D points with order
-    :return bool: 格林公式的计算结果,是否是顺时针
 
+    :return bool: 格林公式的计算结果,是否是顺时针
     """
+
     length = len(points)
 
-    d = 0
+    d: float = 0
     for i in range(length):
         i_use = i % length
         i_add = (i + 1) % length
 
         d += -0.5 * (points[i_use][1] + points[i_add][1]) * (
                 points[i_add][0] - points[i_use][0])
+
     return True if d < 0 else False
 
 
-def _conver_vertex(a: np.ndarray, b: np.ndarray, c: np.ndarray) -> bool:
+def _conver_vertex(points: np.ndarray) -> bool:
     """
-    points in ,which is 2D points,with counter clock wise  order ,a,b,c
+    判断响铃的三个点中，中间点是否是凸顶点,确保传入的points 点顺序必须是逆时针排序的点中截取的片段
 
-    通过升维,判断该点是凸顶点与否
 
-    需要满足逆时针给出点坐标
+    :param points:
     :return:
     """
+    a = points[0]
+    b = points[1]
+    c = points[2]
+
     back_value = True
     crossp = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
-    if crossp > 0:
+    if crossp < 0:  # 如果小于0 则说明此处不是凸顶点
         back_value = False
+
     return back_value
 
 
-def get_cos_by(v1: np.ndarray, v2: np.ndarray) -> float:
+def get_cos_by(v1, v2):
+    """
+    计算两向量夹角cos值
+
+    :param v1:
+    :param v2:
+    :return:
+    """
     # 仅保留计算值本身的精度,不人工进行取舍
 
     v1_length = np.linalg.norm(v1)
@@ -70,7 +84,14 @@ def get_cos_by(v1: np.ndarray, v2: np.ndarray) -> float:
     return v1.dot(v2) / (v1_length * v2_length)
 
 
-def get_angle_by(v1, v2) -> float:
+def get_angle_by(v1, v2):
+    """
+    计算向量夹角度数
+
+    :param v1:
+    :param v2:
+    :return:
+    """
     cos_value = get_cos_by(v1, v2)
 
     if cos_value > 1:
@@ -81,7 +102,7 @@ def get_angle_by(v1, v2) -> float:
     return math.acos(cos_value) / math.pi * 180
 
 
-def _in_triangle(triangle: list, vertex: np.ndarray) -> int:
+def _in_triangle(triangle: List[np.ndarray], vertex: np.ndarray) -> int:
     """
     判断一个点与三角形位置关系
 
@@ -93,7 +114,6 @@ def _in_triangle(triangle: list, vertex: np.ndarray) -> int:
     :param vertex:
     :return:
     """
-
     back = 0
 
     v1 = triangle[0] - vertex
@@ -102,7 +122,6 @@ def _in_triangle(triangle: list, vertex: np.ndarray) -> int:
     angle1 = get_angle_by(v1, v2)
     angle2 = get_angle_by(v2, v3)
     angle3 = get_angle_by(v3, v1)
-
     angles_all = angle1 + angle2 + angle3
     if angle1 == 180 or angle2 == 180 or angle3 == 180:
         back = 0
@@ -314,6 +333,11 @@ def clip(vertices: np.ndarray) -> List:
                     node_current.next_node = node_next_agin
                     node_next.next_node = None
                     continue
+            #     else:
+            #         logger.debug(f"此处是凸角,但是其他点在三角形内部,所以这个点不进行处理")
+            # else:
+            #     logger.debug(f"角非凸角,直接跳过处理")
+
             # 转移到前面
             node_current.next_node = None
             link_end.next_node = node_current
@@ -323,4 +347,3 @@ def clip(vertices: np.ndarray) -> List:
             break
 
     return data_back
-
