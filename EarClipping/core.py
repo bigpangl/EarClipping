@@ -190,7 +190,7 @@ class UV(object):
         :return:
         """
 
-        xyz = np.asarray([0, 0, 0])
+        xyz = self._origin
         xyz += self._u_basic * self.U
         xyz += self._v_basic * self.V
         return xyz
